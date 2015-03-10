@@ -1,0 +1,8 @@
+ 
+# OTA setting file
+#       Input file  attributes here
+# START                file_name         file_number          version                                               description
+self.modules2 = [
+    Module(  INPUT=path+"te8714.upd",      moduleId = 0x001, moduleVersion = 0x01, descriptors = [name_descriptor(name='111')],),
+#    Module(  INPUT=path+"Image2.jpg",  moduleId = 0x002, moduleVersion = 0x01, descriptors = [name_descriptor(name='122')],),
+    ]

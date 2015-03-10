@@ -1,0 +1,141 @@
+<html>
+<head>
+    {% load staticfiles %}
+    <script src="{% static 'js/ajax_csrf.js' %}"></script>
+
+    <style>
+        .pdg_status.ОСТАНОВЛЕНО {
+            color: red;
+        }
+
+        .pdg_status.ЗАПУЩЕНО {
+            color: green;
+        }
+
+        .pdg_status.НЕИЗВЕСТНО {
+            color: darkgrey;
+        }
+
+        .broadcast_status.ОСТАНОВЛЕНО {
+            color: red;
+        }
+
+        .broadcast_status.ЗАПУЩЕНО {
+            color: green;
+        }
+
+        .broadcast_status.НЕИЗВЕСТНО {
+            color: darkgrey;
+        }
+    </style>
+</head>
+
+<body>
+<script type="text/javascript">
+    function sendBroadcastRequest() {
+        $("#start_broadcast").click(function () {
+            window.location.reload();
+            $.post('/operator/broadcast/init/', {"broadcast_status": "start"}/*, function(data){window.location.reload();}*/);
+        });
+        $("#stop_broadcast").click(function () {
+            window.location.reload();
+            $.post('/operator/broadcast/init/', {"broadcast_status": "stop"}/*, function(data){window.location.reload();}*/);
+        });
+    }
+
+    function disableBroadcastBtn() {
+        document.getElementById("start_broadcast").disabled = true;
+        document.getElementById("stop_broadcast").disabled = true;
+        document.getElementById("load_btn").disabled = true;
+    }
+
+    function enableBroadcastBtn() {
+        document.getElementById("start_broadcast").disabled = false;
+        document.getElementById("stop_broadcast").disabled = false;
+        document.getElementById("load_btn").disabled = false;
+    }
+
+    function putLoadingAnimation() {
+        $("#loadImg").show();
+        $("#start_broadcast").hide();
+        $("#stop_broadcast").hide();
+        $("#load_btn").hide();
+        $("#create_ts").hide();
+    }
+
+    function removeLoadingAnimation() {
+        $("#loadImg").hide();
+        $("#start_broadcast").show();
+        $("#stop_broadcast").show();
+        $("#load_btn").show();
+        $("#create_ts").show();
+    }
+
+    function initLoadingAnimation() {
+        if ('{{ generate_status }}' == '1') {
+            putLoadingAnimation();
+            setTimeout(function () {
+                window.location.reload();
+            }, 10000);
+        }
+        else {
+            $("#loadImg").hide();
+        }
+    }
+
+    $(document).ready(function () {
+        sendBroadcastRequest();
+        initLoadingAnimation();
+
+        if ($(".pdg_status").text() == 'ЗАПУЩЕНО' &&
+            $(".broadcast_status").text() != 'НЕИЗВЕСТНО'){
+            enableBroadcastBtn();
+        }
+        else {
+            disableBroadcastBtn();
+        }
+        if ($(".pdg_status").text() == 'ЗАПУЩЕНО'){
+            document.getElementById("load_btn").disabled = false;
+        }
+
+        $('#load_btn').on('click', function () {
+            $('#create_ts_form').load('/operator/broadcast/create');
+        });
+
+        setTimeout(function() {$(".bg-success").remove();}, 5000);
+    });
+</script>
+<h2><p>Управление трансляцией</p></h2>
+
+<div id="content">
+    <p style="margin-bottom: 10px">Статус генератора: <span class="pdg_status {{ pdg_status }}">{{ pdg_status }}</span></p>
+
+    <p style="margin-bottom: 20px">Статус трансляции: <span class="broadcast_status {{ broadcast_status }}">{{ broadcast_status }}</span></p>
+
+    {% if saved %}
+        <p class="bg-success">Поток создан</p>
+    {% endif %}
+
+    {% if messages %}
+        <p class="bg-danger">
+            {% for message in messages %}
+                {{ message }}<br>
+            {% endfor %}
+        </p>
+    {% endif %}
+
+    <button id="start_broadcast" class="btn btn-primary">Запуск</button>
+    <button id="stop_broadcast" class="btn btn-danger">Остановка</button>
+
+    <button id="load_btn" class="btn">Сгенерировать поток</button>
+
+    <div id="loadImg">
+        <p class="help-block">Подождите, это может занять несколько минут. Не закрывайте и не обновляйте страницу.</p>
+        <img src="{% static 'img/wait.gif' %}"/>
+    </div>
+
+    <div style="margin-top: 20px" id="create_ts_form"></div>
+</div>
+
+</body>
+</html>

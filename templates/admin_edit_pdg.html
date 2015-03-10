@@ -1,0 +1,18 @@
+
+<style type="text/css">
+    .CodeMirror {
+        border-top: 1px solid black;
+        border-bottom: 1px solid black;
+        width: 100%;
+        height: auto;
+    }
+    .CodeMirror-scroll {
+      overflow-y: hidden;
+      overflow-x: auto;
+    }
+    dt {font-family: monospace; color: #666;}
+</style>
+<form action="" method="post">
+    <textarea id="code" name="code" cols="120" rows="30">{{ pdg_file_data }}</textarea>
+    <button style="margin-top: 10px;" id="submit_edit_btn" class="btn btn-primary">Сохранить изменения</button>
+</form>

@@ -1,0 +1,44 @@
+<html>
+<head>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static "css/chosen.css" %}"/>
+    <script src="{% static "js/chosen.jquery.min.js" %}"></script>
+</head>
+
+<body>
+<script>
+    function initChosen(){
+        $("select").chosen()
+        {% for s in all_files %}
+        $("option[value='{{s}}']").attr("all_files", "all_files")
+        {% endfor %}
+        $("select").trigger("chosen:updated");
+    }
+
+    $(document).ready(function(){
+        initChosen();
+        function sendResponse(ev){
+            ev.preventDefault();
+            var files_names = $('#files_names').val();
+            $.post('/operator/files/del/', {"files_names":files_names}, function(data){
+                window.location.reload();                            <!-- вызывается только если запрос был обработан серваком -->
+            });
+        }
+        $("#submit_del_btn").on("click", sendResponse);
+
+    });
+</script>
+
+    <form action="" method="POST" class="form-inline">
+        <div class="form-group">
+            <select data-placeholder="Файлы на удаление" name="files_names" id="files_names" class="form-control" multiple style="width: 300px;">
+                {% for one_file in all_files %}
+                <option value="{{one_file}}">{{one_file}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button name="submit_del_btn" type="submit" id="submit_del_btn" class="btn btn-primary">Удалить</button>
+    </form>
+
+</body>
+</html>

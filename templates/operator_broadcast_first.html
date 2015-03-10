@@ -1,0 +1,23 @@
+<html>
+<head>
+    {% load staticfiles %}
+{#    <script src="{% static 'js/ajax_csrf.js' %}"></script>           <!-- нужен тк используются ajax post запросы -->#}
+</head>
+
+<body>
+
+<script>
+    $(document).ready(function(){
+        $('#init').load('/operator/broadcast/init');
+        setTimeout(function() {
+            $("#fake").append("<p style='margin-top: 20px;' class='bg-danger'>Скорее всего что-то пошло не так при подключении к серверу. Позовите администратора или подождите ещё пару минут.</p>");
+            setTimeout(function() { $("#fake").remove(); }, 10000);
+        }, 60000);
+    });
+</script>
+    <div id="init">
+        <img id="loadImg" src="{% static 'img/load.gif' %}" />
+    </div>
+    <div id="fake"></div>   <!-- нужно чтобы было куда цеплять сообщение о кривом подключении к серверу -->
+</body>
+</html>

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block source %}
+{% load staticfiles %}
+    <script src="{% static "js/admin_router_settings.js" %}"></script>
+{% endblock source %}
+
+{#{% block header %}Настройки администратора{% endblock header %}#}
+
+{% block ref_list %}
+    <ul>
+        <li><a href="#!/server">Настроить подключение к серверу</a></li>
+        <li><a href="#!/pdg">Загрузить настройки генератора</a></li>
+        <li><a href="#!/user">Настроить пользователей</a></li>
+        <li><a href="/accounts/logout">Выход</a></li>
+    </ul>
+{% endblock ref_list %}

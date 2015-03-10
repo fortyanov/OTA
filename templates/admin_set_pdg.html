@@ -1,0 +1,90 @@
+<html>
+
+<head>
+{% load staticfiles %}
+<link rel="stylesheet" href="{% static "css/codemirror.css" %}">
+<script src="{% static "js/codemirror.js" %}"></script>
+<script src="{% static "js/ajax_csrf.js" %}"></script>
+{% load poll_extras %}           {# load custom template filter  #}
+</head>
+
+<body>
+<script>
+    $(document).ready(function () {
+        $("#edit_btn").on("click", function () {
+            $('.code_form').load('/staff/pdg/edit', function (data) {
+                var ta = document.getElementById("code");
+                window.editor = CodeMirror.fromTextArea(ta, {mode: "text/html", lineNumbers: true});
+                $("#submit_edit_btn").on("click", function (ev) {
+                    ev.preventDefault();
+                    var code = editor.getValue();
+                    $.post('/staff/pdg/edit/', {"code": code}, function(el){
+                        $(".bg-danger").remove();
+                        $("#content").prepend("<p class='bg-success'> Файл с настройками изменен.</p>")
+                        setTimeout(function() {
+                            $(".bg-success").remove();
+                        }, 5000);
+                    });
+                });
+            });
+        });
+
+        $('#submit_btn').on("click", function () { $("#set_pdg").submit(); });
+        $('#set_pdg').submit(function (e) {                // упаковываем передачу файла в POST запрос  и отправляем его по url
+            $.ajax({
+                       url: '/staff/pdg/set/',
+                       type: 'POST',
+                       data: new FormData(this),
+                       processData: false,
+                       contentType: false,
+                       success: function (data) {
+                           $("#container").html(data);
+                       }
+                   });
+            e.preventDefault();
+        });
+    });
+</script>
+
+<h2><p>Настройки генератора</p></h2>
+
+{% if saved %}
+    <p class="bg-success"> Файл с настройками загружен.</p>
+{% endif %}
+
+{% if pdg_form_errors %}
+        {% for field in pdg_form_errors %}
+            <p class="bg-danger">{{ pdg_form_errors|get_item:field }}</p>
+        {% endfor %}
+{% endif %}
+
+<div id="content">
+    <form class="form-horizontal" id="set_pdg" action="" method="post">{% csrf_token %}
+    {#        <table>{{ pdg_form.as_table }}</table>#}
+        <div style="margin-bottom: 5px;" class="form-group">
+            <label for="id_pdg_file" class="col-sm-2 control-label">Файл: </label>
+            <div class="col-sm-9">
+                <input style="border:none; box-shadow: none;" class="form-control" id="id_pdg_file" name="pdg_file" type="file"/>
+            </div>
+        </div>
+        <p class="help-block">Загрузите файл с настройками генератора</p>
+        <!--<input style="float:left; margin-top: 15px;" id="submit_btn" class="btn btn-primary" type="submit" value="Загрузить">-->
+    </form>
+
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary" id="submit_btn">Загрузить</button>
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li id="edit_btn"><a>Редактировать загруженный</a></li>
+            <li id="load_serv_btn"><a href="/staff/pdg/download/" target="_blank">Скачать с сервера</a></li>
+        </ul>
+    </div>
+
+    <div class="code_form" style="margin-bottom: 10px; margin-top: 10px;"></div>
+</div>
+
+</body>
+</html>

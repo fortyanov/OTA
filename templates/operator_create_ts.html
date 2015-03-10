@@ -1,0 +1,56 @@
+<html>
+<head>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static "css/chosen.css" %}"/>
+    <script src="{% static "js/chosen.jquery.min.js" %}"></script>
+    <script src="{% static "js/ajax_csrf.js" %}"></script>
+</head>
+<body>
+
+<script>
+    function initChosen() {
+        $("select").chosen();
+        {% for s in all_files %}
+            $("option[value='{{s}}']").attr("all_files", "all_files");
+        {% endfor %}
+        $("select").trigger("chosen:updated");
+    }
+
+    function sendCreateTsResponse(ev) {
+        ev.preventDefault();
+        putLoadingAnimation();
+        var files_names = $('#files_names').val();
+        $.post('/operator/broadcast/create/',
+               {"files_names": files_names},
+               function (data) {
+                   if (data.success) {
+                       $('#container').load('/operator/broadcast/init?success');
+                   }
+                   else {
+                       removeLoadingAnimation();
+                       $("#create_ts").hide();
+                       $("#content").prepend("<p class='bg-danger'>" + data.msg + "</p>");
+                   }
+               }, dataType = "json");
+    }
+
+    $(document).ready(function () {
+        initChosen();
+        $("#submit_ts_files_btn").on("click", sendCreateTsResponse);
+    });
+</script>
+
+<form id="create_ts" action="" method="POST" class="form-inline">
+    <div class="form-group">
+        <select data-placeholder="Файлы для генерации потока" name="files_names" id="files_names" class="form-control"
+                multiple style="width: 300px;">
+            {% for one_file in all_files %}
+                <option value="{{ one_file }}">{{ one_file }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button name="submit_ts_files_btn" id="submit_ts_files_btn" class="btn btn-primary">Готово</button>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,71 @@
+<html>
+<head>
+    {% load staticfiles %}
+    <script src="{% static 'js/ajax_csrf.js' %}"></script>
+    {% load poll_extras %}           {# load custom template filter  #}
+</head>
+
+<body>
+<script>
+    $(document).ready(function(){
+        $("#set_server").submit(function(ev){
+            ev.preventDefault();
+            var server_addr = document.getElementById('id_server_addr').value;
+            var server_user = document.getElementById('id_server_user').value;
+            var server_pass = document.getElementById('id_server_pass').value;
+            $.ajax({
+                url: '/staff/server/',
+                type: 'POST',
+                data: {"server_addr": server_addr, "server_user": server_user, "server_pass": server_pass},
+                success: function(data){
+                    $("#container").html(data)}
+            });
+        });
+    });
+</script>
+
+<h2><p>Параметры сервера</p></h2>
+{% if saved %}
+    <p class="bg-success">Настройки сервера изменены</p>
+{% endif %}
+
+<div id="content">
+    <form class="form-horizontal" id="set_server" action="" method="post">
+    {#            <table>{{ serv_form.as_table }}</table>#}
+        <div class="form-group">
+            <label for="id_server_addr" class="col-sm-3 control-label">Адрес: </label>
+            <div class="col-sm-9">
+                <input class="form-control" id="id_server_addr" maxlength="40" name="server_addr" type="text" placeholder="{{ fields_data.server_addr }}" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="id_server_user" class="col-sm-3 control-label">Логин: </label>
+            <div class="col-sm-9">
+                <input class="form-control" id="id_server_user" maxlength="40" name="server_user" type="text" placeholder="{{ fields_data.server_user }}" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="id_server_pass" class="col-sm-3 control-label">Пароль: </label>
+            <div class="col-sm-9">
+                <input class="form-control" id="id_server_pass" maxlength="40" name="server_pass" type="password" />
+            </div>
+        </div>
+
+        <input id="submit_btn" style="margin-top: 15px" class="btn btn-primary" type="submit" value="Готово">
+    </form>
+</div>
+
+    {% if serv_form_errors %}
+        <script>
+            {% for field in serv_form_errors %}
+                var inp = $('input[name={{field}}]');
+                inp.attr('placeholder', '{{ serv_form_errors|get_item:field }}');
+                inp.parent().parent('.form-group').attr('class', "form-group has-error");
+            {% endfor %}
+        </script>
+    {% endif %}
+
+</body>
+</html>

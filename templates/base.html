@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html>
+
+<head profile="http://www.w3.org/2005/10/profile">
+    <title>Настройка ОТА</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static "css/bootstrap.min.css"%}"/>
+    <link rel="stylesheet" href="{% static "css/style.css"%}"/>
+    <link rel="shortcat icon" href="{% static "img/favicon.png" %}"/>
+    <script src="{% static "js/jquery-2.1.0.min.js" %}"></script>
+    <script src="{% static "js/bootstrap.min.js" %}"></script>
+    <script src="{% static "js/underscore.js" %}"></script>
+    <script src="{% static "js/backbone.js" %}"></script>
+    {% block source %}{% endblock source %}
+</head>
+
+<body>
+<div id="main">
+    <div id="nav" class="container-fluid">
+        <h3><p>Меню ОТА</p></h3>
+        <div class="well">
+            {% block ref_list %}{% endblock ref_list %}
+        </div>
+    </div>
+    <div id="container" class="container-fluid"></div>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block source %}
+{% load staticfiles %}
+<script src="{% static "js/operator_router_settings.js" %}"></script>
+{% endblock source %}
+
+{#{% block header %}Настройки оператора{% endblock header %}#}
+
+{% block ref_list %}
+    <ul>
+        <li><a href="#!/files">Настроить список файлов</a></li>
+        <li><a href="#!/broadcast">Управление трансляцией</a></li>
+        <li><a href="/accounts/logout">Выход</a></li>
+    </ul>
+{% endblock ref_list %}

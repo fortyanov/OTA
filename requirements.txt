@@ -1,0 +1,4 @@
+Django==1.6.7
+flup==1.0.2
+python-magic
+django-multiuploader

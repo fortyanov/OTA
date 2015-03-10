@@ -1,0 +1,6 @@
+# OTA setting file
+#Input file  attributes here
+# START                file_name         file_number          version                           description
+self.modules2 = [
+    Module(  INPUT=path+"ota_setting",      moduleId = 0x1, moduleVersion = 0x01, descriptors = [name_descriptor(name='101')],),
+]

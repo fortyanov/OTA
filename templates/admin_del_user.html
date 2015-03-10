@@ -1,0 +1,43 @@
+<html>
+<head>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static "css/chosen.css" %}"/>
+    <script src="{% static "js/chosen.jquery.min.js" %}"></script>
+
+</head>
+<script>
+    function initChosen(){
+        $("select").chosen({no_results_text: "Имя не найдено"})
+        {% for s in all_users %}
+        $("option[value='{{s}}']").attr("all_users", "all_users")
+        {% endfor %}
+        $("select").trigger("chosen:updated");
+    }
+
+    $(document).ready(function(){
+        initChosen();
+        function sendResponse(ev){
+            ev.preventDefault();
+            var users_names = $('#users_names').val();
+            $.post('/staff/user/del/', {"users_names":users_names}, function(data){
+                window.location.reload();                            <!-- вызывается только если запрос был обработан серваком -->
+            });
+        }
+        $("#submit_del_btn").on("click", sendResponse);
+    });
+</script>
+
+<body>
+    <form action="" method="POST" class="form-inline">{% csrf_token %}
+        <div class="form-group">
+            <select data-placeholder="Пользователи на удаление" name="users_names" id="users_names" class="form-control" multiple style="width: 250px;">
+                {% for one_user in all_users %}
+                <option value="{{one_user}}">{{one_user}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button name="submit_del_btn" type="submit" id="submit_del_btn" class="btn btn-primary">Удалить</button>
+    </form>
+
+</body>
+</html>
